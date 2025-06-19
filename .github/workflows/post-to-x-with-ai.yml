@@ -1,0 +1,35 @@
+name: Post to X (Twitter) with AI Lead Generation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'articles/**/*.md'
+      - 'books/**/*.md'
+
+jobs:
+  post-to-x:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Get changed files
+        id: diff
+        run: |
+          echo "new_files=$(git diff --name-only --diff-filter=A HEAD~1 HEAD | grep -E '\.md$' || echo '')" >> $GITHUB_OUTPUT
+          echo "modified_files=$(git diff --name-only --diff-filter=M HEAD~1 HEAD | grep -E '\.md$' || echo '')" >> $GITHUB_OUTPUT
+
+      - name: Post to X with AI
+        uses: kannna5296/zenn-x-post@v0
+        with:
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          twitter_api_key: ${{ secrets.TWITTER_API_KEY }}
+          twitter_api_secret: ${{ secrets.TWITTER_API_SECRET }}
+          twitter_access_token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          twitter_access_secret: ${{ secrets.TWITTER_ACCESS_SECRET }}
+          new_files: ${{ steps.diff.outputs.new_files }}
+          modified_files: ${{ steps.diff.outputs.modified_files }} 

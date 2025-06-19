@@ -17,6 +17,12 @@ inputs:
   twitter_access_secret:
     description: 'Twitter Access Secret'
     required: true
+  new_files:
+    description: 'Newly added markdown files'
+    required: false
+  modified_files:
+    description: 'Modified markdown files'
+    required: false
 
 runs:
   using: 'composite'
@@ -33,24 +39,12 @@ runs:
       run: |
         pip install requests requests-oauthlib
 
-    - name: Get changed files
-      id: changed-files
-      shell: bash
-      run: |
-        # 新規追加されたMarkdownファイルを取得
-        NEW_FILES=$(git diff --name-only --diff-filter=A HEAD~1 HEAD | grep -E '\.(md)$' | grep -E '^(articles|books)/' || echo "")
-        echo "new_files=${NEW_FILES}" >> $GITHUB_OUTPUT
-        
-        # 変更されたMarkdownファイルを取得
-        MODIFIED_FILES=$(git diff --name-only --diff-filter=M HEAD~1 HEAD | grep -E '\.(md)$' | grep -E '^(articles|books)/' || echo "")
-        echo "modified_files=${MODIFIED_FILES}" >> $GITHUB_OUTPUT
-
     - name: Check for new published articles
       id: article-check
       shell: bash
       run: |
         chmod +x "${{ github.action_path }}/scripts/check-articles.sh"
-        "${{ github.action_path }}/scripts/check-articles.sh" "${{ steps.changed-files.outputs.new_files }}" "${{ steps.changed-files.outputs.modified_files }}"
+        "${{ github.action_path }}/scripts/check-articles.sh" "${{ inputs.new_files }}" "${{ inputs.modified_files }}"
 
     - name: Generate AI Lead Text
       if: steps.article-check.outputs.should_post == 'true'

@@ -31,6 +31,8 @@ if [ -n "$NEW_FILES" ]; then
     fi
     
     # ZennのURLを生成
+    # TODO アカウントIDは外から注入できるようにする
+    # TODO Zenn以外も対応するハテナとかもいけそう？
     if [[ "$FILE_PATH" == articles/* ]]; then
       SLUG=$(basename "$FILE_PATH" .md)
       ARTICLE_URL="https://zenn.dev/kannna5296/articles/${SLUG}"
