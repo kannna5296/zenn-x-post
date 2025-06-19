@@ -33,6 +33,18 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        pip install requests requests-oauthlib
+
+    # 以下 差分チェック
+
     - name: Check for new published articles
       id: article-check
       shell: bash
@@ -65,16 +77,6 @@ runs:
         printf "%s" "$POST_MESSAGE"
 
     # 以下 X Post
-
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Install dependencies
-      shell: bash
-      run: |
-        pip install requests requests-oauthlib
 
     - name: Post to X (Twitter)
       if: steps.article-check.outputs.should_post == 'true'
