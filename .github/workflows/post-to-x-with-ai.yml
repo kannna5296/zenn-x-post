@@ -40,8 +40,8 @@ jobs:
       - name: Check for new published articles
         id: article-check
         run: |
-          chmod +x .github/scripts/check-articles.sh
-          .github/scripts/check-articles.sh "${{ steps.changed-files.outputs.new_files }}" "${{ steps.changed-files.outputs.modified_files }}"
+          chmod +x "${{ github.action_path }}/../scripts/check-articles.sh"
+          "${{ github.action_path }}/../check-articles.sh" "${{ steps.changed-files.outputs.new_files }}" "${{ steps.changed-files.outputs.modified_files }}"
 
       - name: Generate AI Lead Text
         if: steps.article-check.outputs.should_post == 'true'
@@ -56,7 +56,7 @@ jobs:
         if: steps.article-check.outputs.should_post == 'true'
         run: |
           # Twitter APIにリクエストを送信
-          python .github/scripts/tweet.py
+          python ${{ github.action_path }}/../scripts/tweet.py
         env:
           MESSAGE: ${{ steps.ai-lead.outputs.post_message }}
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
