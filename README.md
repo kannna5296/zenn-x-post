@@ -5,12 +5,12 @@ AIによるリード文生成もワンストップで完結するGitHub Actions�
 
 ---
 
-<div style="background: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 1em; border-radius: 6px; margin-bottom: 1em;">
-<strong>⚠️【重要】課金・利用責任について</strong><br>
-本リポジトリを利用して発生するOpenAIやX（旧Twitter）APIの利用料金・課金については、<br>
-各サービスの公式ドキュメント・利用規約をご確認ください。<br>
-当リポジトリおよび作者は一切の責任を負いません。
-</div>
+> [!WARNING]
+> **重要: 課金・利用責任について**
+>
+> 本リポジトリを利用して発生するOpenAIやX（旧Twitter）APIの利用料金・課金については、
+> 各サービスの公式ドキュメント・利用規約をご確認ください。
+> 当リポジトリおよび作者は一切の責任を負いません。
 
 ---
 
@@ -92,10 +92,15 @@ jobs:
       - name: Get changed files
         id: diff
         run: |
+          # 新規追加されたMarkdownファイルを取得
           NEW_FILES=$(git diff --name-only --diff-filter=A HEAD~1 HEAD | grep -E '\.(md)$' | grep -E '^(articles|books)/' || echo "")
           echo "new_files=${NEW_FILES}" >> $GITHUB_OUTPUT
+          echo "[DEBUG] NEW_FILES: $NEW_FILES"
+        
+          # 変更されたMarkdownファイルを取得
           MODIFIED_FILES=$(git diff --name-only --diff-filter=M HEAD~1 HEAD | grep -E '\.(md)$' | grep -E '^(articles|books)/' || echo "")
           echo "modified_files=${MODIFIED_FILES}" >> $GITHUB_OUTPUT
+          echo "[DEBUG] MODIFIED_FILES: $MODIFIED_FILES" 
 
       - name: Post to X with AI
         uses: kannna5296/zenn-x-post@v0
