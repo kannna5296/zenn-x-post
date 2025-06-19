@@ -48,12 +48,24 @@ runs:
 
     - name: Generate AI Lead Text
       if: steps.article-check.outputs.should_post == 'true'
-      id: ai-lead
-      uses: ./generate-ai-lead
-      with:
-        article_title: ${{ steps.article-check.outputs.article_title }}
-        article_url: ${{ steps.article-check.outputs.article_url }}
-        openai_api_key: ${{ inputs.openai_api_key }}
+      id: generate-lead
+      shell: bash
+      run: |
+        chmod +x "${{ github.action_path }}/scripts/generate-ai-lead.sh"
+        "${{ github.action_path }}/scripts/generate-ai-lead.sh" "${{ steps.article-check.outputs.article_url }}" "${{ inputs.openai_api_key }}"
+
+    - name: Create Final Message
+      if: steps.article-check.outputs.should_post == 'true'
+      id: create-message
+      shell: bash
+      run: |
+        AI_LEAD="${{ steps.generate-lead.outputs.ai_lead_text }}"
+        TITLE="${{ steps.article-check.outputs.article_title }}"
+        URL="${{ steps.article-check.outputs.article_url }}"
+        POST_MESSAGE="📝 新しい技術記事を投稿しました！\n\n${AI_LEAD}\n\n${URL}"
+        echo "post_message=${POST_MESSAGE}" >> $GITHUB_OUTPUT
+        echo "Post Message created:"
+        printf "%s" "$POST_MESSAGE"
 
     - name: Post to X (Twitter)
       if: steps.article-check.outputs.should_post == 'true'
@@ -61,7 +73,7 @@ runs:
       run: |
         python "${{ github.action_path }}/scripts/tweet.py"
       env:
-        MESSAGE: ${{ steps.ai-lead.outputs.post_message }}
+        MESSAGE: ${{ steps.create-message.outputs.post_message }}
         TWITTER_API_KEY: ${{ inputs.twitter_api_key }}
         TWITTER_API_SECRET: ${{ inputs.twitter_api_secret }}
         TWITTER_ACCESS_TOKEN: ${{ inputs.twitter_access_token }}
