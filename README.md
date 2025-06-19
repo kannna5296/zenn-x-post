@@ -1,6 +1,6 @@
 # zenn-x-post
 
-Zennの記事を自動でX（Twitter）に投稿！  
+Zennの記事を自動でXに投稿！  
 AIによるリード文生成もワンストップで完結するGitHub Actions用カスタムアクションです。
 
 ---
@@ -8,7 +8,7 @@ AIによるリード文生成もワンストップで完結するGitHub Actions�
 ## 概要
 
 **zenn-x-post** は、Zennの記事管理リポジトリで新しい記事や公開設定の変更があった際に、  
-AI（OpenAI API）で魅力的なリード文を自動生成し、X（Twitter）へ自動投稿します。
+AI（OpenAI API）で魅力的なリード文を自動生成し、Xへ自動投稿します。
 
 ---
 
@@ -18,7 +18,7 @@ AI（OpenAI API）で魅力的なリード文を自動生成し、X（Twitter）
   `published: true` になった記事だけを自動で検出
 - **AIによるリード文自動生成**  
   OpenAI API（GPT-4）でX向けのリード文を自動作成
-- **X（Twitter）への自動投稿**  
+- **Xへの自動投稿**  
   生成したリード文＋記事URLをXに自動投稿
 
 ---
@@ -31,10 +31,10 @@ AI（OpenAI API）で魅力的なリード文を自動生成し、X（Twitter）
 - **APIキーの登録**  
   GitHubリポジトリの「Settings > Secrets and variables > Actions」で以下を登録
   - `OPENAI_API_KEY`
-  - `TWITTER_API_KEY`
-  - `TWITTER_API_SECRET`
-  - `TWITTER_ACCESS_TOKEN`
-  - `TWITTER_ACCESS_SECRET`
+  - `X_API_KEY`
+  - `X_API_SECRET`
+  - `X_ACCESS_TOKEN`
+  - `X_ACCESS_SECRET`
 
 ---
 
@@ -74,10 +74,10 @@ jobs:
         uses: kannna5296/zenn-x-post@v0
         with:
           openai_api_key: ${{ secrets.OPENAI_API_KEY }}
-          twitter_api_key: ${{ secrets.TWITTER_API_KEY }}
-          twitter_api_secret: ${{ secrets.TWITTER_API_SECRET }}
-          twitter_access_token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
-          twitter_access_secret: ${{ secrets.TWITTER_ACCESS_SECRET }}
+          x_api_key: ${{ secrets.X_API_KEY }}
+          x_api_secret: ${{ secrets.X_API_SECRET }}
+          x_access_token: ${{ secrets.X_ACCESS_TOKEN }}
+          x_access_secret: ${{ secrets.X_ACCESS_SECRET }}
           new_files: ${{ steps.diff.outputs.new_files }}
           modified_files: ${{ steps.diff.outputs.modified_files }}
           zenn_user_id: <あなたのZennユーザーID>
@@ -92,7 +92,7 @@ jobs:
 - **主要スクリプト**
   - `scripts/check-articles.py` … 新規/公開記事の検出・タイトル/URL抽出
   - `scripts/generate-ai-lead.py` … OpenAI APIでリード文生成
-  - `scripts/tweet.py` … X（Twitter）投稿
+  - `scripts/tweet.py` … X投稿
 - **GitHub Actions用定義**  
   - `action.yml` … 入力パラメータや出力値の定義
 

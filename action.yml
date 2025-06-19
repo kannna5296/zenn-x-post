@@ -5,17 +5,17 @@ inputs:
   openai_api_key:
     description: 'OpenAI API Key'
     required: true
-  twitter_api_key:
-    description: 'Twitter API Key'
+  x_api_key:
+    description: 'X API Key'
     required: true
-  twitter_api_secret:
-    description: 'Twitter API Secret'
+  x_api_secret:
+    description: 'X API Secret'
     required: true
-  twitter_access_token:
-    description: 'Twitter Access Token'
+  x_access_token:
+    description: 'X Access Token'
     required: true
-  twitter_access_secret:
-    description: 'Twitter Access Secret'
+  x_access_secret:
+    description: 'X Access Secret'
     required: true
   new_files:
     description: 'Newly added markdown files'
@@ -77,14 +77,14 @@ runs:
 
     # 以下 X Post
 
-    - name: Post to X (Twitter)
+    - name: Post to X
       if: steps.article-check.outputs.should_post == 'true'
       shell: bash
       run: |
         python "${{ github.action_path }}/scripts/tweet.py"
       env:
         MESSAGE: ${{ steps.create-message.outputs.post_message }}
-        TWITTER_API_KEY: ${{ inputs.twitter_api_key }}
-        TWITTER_API_SECRET: ${{ inputs.twitter_api_secret }}
-        TWITTER_ACCESS_TOKEN: ${{ inputs.twitter_access_token }}
-        TWITTER_ACCESS_SECRET: ${{ inputs.twitter_access_secret }} 
+        X_API_KEY: ${{ inputs.x_api_key }}
+        X_API_SECRET: ${{ inputs.x_api_secret }}
+        X_ACCESS_TOKEN: ${{ inputs.x_access_token }}
+        X_ACCESS_SECRET: ${{ inputs.x_access_secret }} 
