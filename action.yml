@@ -60,7 +60,9 @@ runs:
       id: generate-lead
       shell: bash
       run: |
-        python "${{ github.action_path }}/scripts/generate-ai-lead.py" "${{ steps.article-check.outputs.article_title }}" "${{ steps.article-check.outputs.article_url }}" "${{ inputs.openai_api_key }}"
+        python "${{ github.action_path }}/scripts/generate-ai-lead.py" "${{ steps.article-check.outputs.article_title }}" "${{ steps.article-check.outputs.article_url }}"
+      env:
+        OPENAI_API_KEY: ${{ inputs.openai_api_key }}
 
     # 以下 X Post
 
@@ -68,7 +70,7 @@ runs:
       if: steps.article-check.outputs.should_post == 'true'
       shell: bash
       run: |
-        python "${{ github.action_path }}/scripts/tweet.py" "${{ steps.generate-lead.outputs.post_message }}"
+        python "${{ github.action_path }}/scripts/post-to-x.py" "${{ steps.generate-lead.outputs.post_message }}"
       env:
         X_API_KEY: ${{ inputs.x_api_key }}
         X_API_SECRET: ${{ inputs.x_api_secret }}
