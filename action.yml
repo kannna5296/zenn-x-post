@@ -1,0 +1,73 @@
+name: 'Zenn X Post Action'
+description: 'Automatically post Zenn articles to X (Twitter) with AI-generated lead text'
+
+inputs:
+  openai_api_key:
+    description: 'OpenAI API Key'
+    required: true
+  twitter_api_key:
+    description: 'Twitter API Key'
+    required: true
+  twitter_api_secret:
+    description: 'Twitter API Secret'
+    required: true
+  twitter_access_token:
+    description: 'Twitter Access Token'
+    required: true
+  twitter_access_secret:
+    description: 'Twitter Access Secret'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        pip install requests requests-oauthlib
+
+    - name: Get changed files
+      id: changed-files
+      shell: bash
+      run: |
+        # 新規追加されたMarkdownファイルを取得
+        NEW_FILES=$(git diff --name-only --diff-filter=A HEAD~1 HEAD | grep -E '\.(md)$' | grep -E '^(articles|books)/' || echo "")
+        echo "new_files=${NEW_FILES}" >> $GITHUB_OUTPUT
+        
+        # 変更されたMarkdownファイルを取得
+        MODIFIED_FILES=$(git diff --name-only --diff-filter=M HEAD~1 HEAD | grep -E '\.(md)$' | grep -E '^(articles|books)/' || echo "")
+        echo "modified_files=${MODIFIED_FILES}" >> $GITHUB_OUTPUT
+
+    - name: Check for new published articles
+      id: article-check
+      shell: bash
+      run: |
+        chmod +x .github/scripts/check-articles.sh
+        .github/scripts/check-articles.sh "${{ steps.changed-files.outputs.new_files }}" "${{ steps.changed-files.outputs.modified_files }}"
+
+    - name: Generate AI Lead Text
+      if: steps.article-check.outputs.should_post == 'true'
+      id: ai-lead
+      uses: ./.github/actions/generate-ai-lead
+      with:
+        article_title: ${{ steps.article-check.outputs.article_title }}
+        article_url: ${{ steps.article-check.outputs.article_url }}
+        openai_api_key: ${{ inputs.openai_api_key }}
+
+    - name: Post to X (Twitter)
+      if: steps.article-check.outputs.should_post == 'true'
+      shell: bash
+      run: |
+        # Twitter APIにリクエストを送信
+        python .github/scripts/tweet.py
+      env:
+        MESSAGE: ${{ steps.ai-lead.outputs.post_message }}
+        TWITTER_API_KEY: ${{ inputs.twitter_api_key }}
+        TWITTER_API_SECRET: ${{ inputs.twitter_api_secret }}
+        TWITTER_ACCESS_TOKEN: ${{ inputs.twitter_access_token }}
+        TWITTER_ACCESS_SECRET: ${{ inputs.twitter_access_secret }} 

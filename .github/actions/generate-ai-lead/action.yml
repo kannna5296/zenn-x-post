@@ -1,0 +1,49 @@
+name: 'Generate AI Lead Text'
+description: 'Generate AI-powered lead text for social media posts'
+
+inputs:
+  article_title:
+    description: 'Article title'
+    required: true
+  article_url:
+    description: 'Article URL'
+    required: true
+  openai_api_key:
+    description: 'OpenAI API Key'
+    required: true
+
+outputs:
+  ai_lead_text:
+    description: 'Generated AI lead text'
+    value: ${{ steps.generate-lead.outputs.ai_lead_text }}
+  post_message:
+    description: 'Final message for posting'
+    value: ${{ steps.create-message.outputs.post_message }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Generate AI Lead Text
+      id: generate-lead
+      shell: bash
+      run: |
+        chmod +x .github/scripts/generate_lead/generate-ai-lead.sh
+        .github/scripts/generate_lead/generate-ai-lead.sh "${{ inputs.article_url }}" "${{ inputs.openai_api_key }}"
+
+    - name: Create Final Message
+      id: create-message
+      shell: bash
+      run: |
+        AI_LEAD="${{ steps.generate-lead.outputs.ai_lead_text }}"
+        TITLE="${{ inputs.article_title }}"
+        URL="${{ inputs.article_url }}"
+        
+        # 文字数制限を考慮したメッセージ作成
+        # Twitter制限: 140文字、絵文字2文字換算、URL22文字
+        
+        # 基本メッセージ構造（固定メッセージ + AI生成リード文 + URL）
+        POST_MESSAGE="📝 新しい技術記事を投稿しました！\n\n${AI_LEAD}\n\n${URL}"
+        
+        echo "post_message=${POST_MESSAGE}" >> $GITHUB_OUTPUT
+        echo "Post Message created:"
+        printf "%s" "$POST_MESSAGE" 
