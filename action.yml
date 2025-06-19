@@ -29,15 +29,6 @@ runs:
   steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Install dependencies
-      shell: bash
-      run: |
-        pip install requests requests-oauthlib
 
     - name: Check for new published articles
       id: article-check
@@ -45,6 +36,8 @@ runs:
       run: |
         chmod +x "${{ github.action_path }}/scripts/check-articles.sh"
         "${{ github.action_path }}/scripts/check-articles.sh" "${{ inputs.new_files }}" "${{ inputs.modified_files }}"
+      
+    # 以下 リード分生成 + Post文生成
 
     - name: Generate AI Lead Text
       if: steps.article-check.outputs.should_post == 'true'
@@ -66,6 +59,18 @@ runs:
         echo "post_message=${POST_MESSAGE}" >> $GITHUB_OUTPUT
         echo "Post Message created:"
         printf "%s" "$POST_MESSAGE"
+
+    # 以下 X Post
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        pip install requests requests-oauthlib
 
     - name: Post to X (Twitter)
       if: steps.article-check.outputs.should_post == 'true'
