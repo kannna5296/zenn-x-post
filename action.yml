@@ -53,7 +53,7 @@ runs:
     - name: Generate AI Lead Text
       if: steps.article-check.outputs.should_post == 'true'
       id: ai-lead
-      uses: ./.github/actions/generate-ai-lead
+      uses: ./generate-ai-lead
       with:
         article_title: ${{ steps.article-check.outputs.article_title }}
         article_url: ${{ steps.article-check.outputs.article_url }}
