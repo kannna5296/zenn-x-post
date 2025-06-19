@@ -60,20 +60,7 @@ runs:
       id: generate-lead
       shell: bash
       run: |
-        python "${{ github.action_path }}/scripts/generate-ai-lead.py" "${{ steps.article-check.outputs.article_url }}" "${{ inputs.openai_api_key }}"
-
-    - name: Create Final Message
-      if: steps.article-check.outputs.should_post == 'true'
-      id: create-message
-      shell: bash
-      run: |
-        AI_LEAD="${{ steps.generate-lead.outputs.ai_lead_text }}"
-        TITLE="${{ steps.article-check.outputs.article_title }}"
-        URL="${{ steps.article-check.outputs.article_url }}"
-        POST_MESSAGE="📝 新しい技術記事を投稿しました！\n\n${AI_LEAD}\n\n${URL}"
-        echo "post_message=${POST_MESSAGE}" >> $GITHUB_OUTPUT
-        echo "Post Message created:"
-        printf "%s" "$POST_MESSAGE"
+        python "${{ github.action_path }}/scripts/generate-ai-lead.py" "${{ steps.article-check.outputs.article_title }}" "${{ steps.article-check.outputs.article_url }}" "${{ inputs.openai_api_key }}" "📝 新しい技術記事を投稿しました！"
 
     # 以下 X Post
 
@@ -83,7 +70,7 @@ runs:
       run: |
         python "${{ github.action_path }}/scripts/tweet.py"
       env:
-        MESSAGE: ${{ steps.create-message.outputs.post_message }}
+        MESSAGE: ${{ steps.generate-lead.outputs.post_message }}
         X_API_KEY: ${{ inputs.x_api_key }}
         X_API_SECRET: ${{ inputs.x_api_secret }}
         X_ACCESS_TOKEN: ${{ inputs.x_access_token }}

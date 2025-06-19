@@ -12,6 +12,26 @@ AI（OpenAI API）で魅力的なリード文を自動生成し、Xへ自動投�
 
 OpenAI APIキーを指定しない場合は、AIリード文生成をスキップし「📝 新しい技術記事を投稿しました！+URL」のみをXに投稿します。お金かけたくない場合はこちらを利用ください！
 
+投稿文は以下の形式になります（AIリード文がなければその部分は除外されます）：
+
+- **AIリード文ありの例**
+
+```
+📝 新しい技術記事を投稿しました！
+
+AIが生成したリード文がここに入ります。
+
+https://zenn.dev/xxxx/articles/yyyy
+```
+
+- **AIリード文なしの例**
+
+```
+📝 新しい技術記事を投稿しました！
+
+https://zenn.dev/xxxx/articles/yyyy
+```
+
 ---
 
 ## 主な特徴
@@ -94,8 +114,8 @@ jobs:
 
 - **主要スクリプト**
   - `scripts/check-articles.py` … 新規/公開記事の検出・タイトル/URL抽出
+  - `scripts/generate-ai-lead.py` … OpenAI APIでリード文生成（APIキー未指定時はスキップ、投稿文組み立ても担当）
   - `scripts/tweet.py` … X投稿
-  - `scripts/generate-ai-lead.py` … OpenAI APIでリード文生成（APIキー未指定時はスキップ）
 - **GitHub Actions用定義**  
   - `action.yml` … 入力パラメータや出力値の定義
 
