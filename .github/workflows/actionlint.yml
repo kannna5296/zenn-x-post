@@ -2,7 +2,7 @@ name: actionlint
 
 on:
   pull_request:
-    paths: '.github/workflows/*.yml'
+    paths: '*.yml'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
