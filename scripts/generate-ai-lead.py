@@ -5,6 +5,7 @@ import json
 import requests
 
 PREFIX = "[generate-ai-lead.py]"
+DEFAULT_MESSAGE = "📝 新しい技術記事を投稿しました！"
 
 def log(msg):
     print(f"{PREFIX} {msg}")
@@ -15,14 +16,13 @@ def set_output(name, value):
     with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as f:
         f.write(f"{name}={value}\n")
 
-if len(sys.argv) != 5:
-    print(f"{PREFIX} Usage: generate-ai-lead.py <article_title> <article_url> <openai_api_key> <default_message>")
+if len(sys.argv) != 3:
+    print(f"{PREFIX} Usage: generate-ai-lead.py <article_title> <article_url> <openai_api_key>")
     sys.exit(1)
 
 ARTICLE_TITLE = sys.argv[1]
 ARTICLE_URL = sys.argv[2]
 OPENAI_API_KEY = sys.argv[3]
-DEFAULT_MESSAGE = sys.argv[4]
 GITHUB_OUTPUT = os.environ.get("GITHUB_OUTPUT", None)
 if not GITHUB_OUTPUT:
     print(f"{PREFIX} GITHUB_OUTPUT env not set. Exiting.")

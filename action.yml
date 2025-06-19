@@ -60,7 +60,7 @@ runs:
       id: generate-lead
       shell: bash
       run: |
-        python "${{ github.action_path }}/scripts/generate-ai-lead.py" "${{ steps.article-check.outputs.article_title }}" "${{ steps.article-check.outputs.article_url }}" "${{ inputs.openai_api_key }}" "📝 新しい技術記事を投稿しました！"
+        python "${{ github.action_path }}/scripts/generate-ai-lead.py" "${{ steps.article-check.outputs.article_title }}" "${{ steps.article-check.outputs.article_url }}" "${{ inputs.openai_api_key }}"
 
     # 以下 X Post
 
