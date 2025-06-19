@@ -3,6 +3,8 @@
 # 記事の公開状態をチェックするスクリプト
 # 使用方法: ./check-articles.sh <new_files> <modified_files>
 
+PREFIX="[check-articles.sh]"
+
 NEW_FILES="$1"
 MODIFIED_FILES="$2"
 
@@ -10,14 +12,18 @@ SHOULD_POST="false"
 ARTICLE_TITLE=""
 ARTICLE_URL=""
 
+log() {
+  echo "$PREFIX $1"
+}
+
 # 新規ファイルがある場合
 if [ -n "$NEW_FILES" ]; then
   FILE_PATH="$NEW_FILES"
-  echo "Checking new file: $FILE_PATH"
+  log "Checking new file: $FILE_PATH"
   
   # published: true が含まれているかチェック
   if grep -q "published: true" "$FILE_PATH"; then
-    echo "New published article found: $FILE_PATH"
+    log "New published article found: $FILE_PATH"
     SHOULD_POST="true"
     
     # ファイルの最初の行からタイトルを取得（# で始まる場合）
@@ -41,13 +47,13 @@ if [ -n "$NEW_FILES" ]; then
       ARTICLE_URL="https://zenn.dev/kannna5296/books/${SLUG}"
     fi
   else
-    echo "New file is not published: $FILE_PATH"
+    log "New file is not published: $FILE_PATH"
   fi
   
 # 変更されたファイルがある場合
 elif [ -n "$MODIFIED_FILES" ]; then
   FILE_PATH="$MODIFIED_FILES"
-  echo "Checking modified file: $FILE_PATH"
+  log "Checking modified file: $FILE_PATH"
   
   # 変更前のファイルのpublished状態を確認
   PREV_PUBLISHED=false
@@ -61,12 +67,12 @@ elif [ -n "$MODIFIED_FILES" ]; then
     CURRENT_PUBLISHED=true
   fi
   
-  echo "Previous published state: $PREV_PUBLISHED"
-  echo "Current published state: $CURRENT_PUBLISHED"
+  log "Previous published state: $PREV_PUBLISHED"
+  log "Current published state: $CURRENT_PUBLISHED"
   
   # published: false から published: true に変更された場合
   if [ "$PREV_PUBLISHED" = "false" ] && [ "$CURRENT_PUBLISHED" = "true" ]; then
-    echo "Article published status changed from false to true: $FILE_PATH"
+    log "Article published status changed from false to true: $FILE_PATH"
     SHOULD_POST="true"
     
     # ファイルの最初の行からタイトルを取得
@@ -88,10 +94,10 @@ elif [ -n "$MODIFIED_FILES" ]; then
       ARTICLE_URL="https://zenn.dev/kannna5296/books/${SLUG}"
     fi
   else
-    echo "Modified file is not newly published: $FILE_PATH"
+    log "Modified file is not newly published: $FILE_PATH"
   fi
 else
-  echo "No new or modified markdown files found"
+  log "No new or modified markdown files found"
 fi
 
 # GitHub Actionsの出力形式で結果を出力

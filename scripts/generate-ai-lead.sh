@@ -3,12 +3,17 @@
 # AI Lead生成スクリプト
 # 使用方法: ./generate-ai-lead.sh <article_url> <openai_api_key>
 
+PREFIX="[generate-ai-lead.sh]"
+log() {
+  echo "$PREFIX $1"
+}
+
 ARTICLE_URL="$1"
 OPENAI_API_KEY="$2"
 
-echo "=== OpenAI API Request ==="
-echo "Article URL: $ARTICLE_URL"
-echo "OpenAI API Key: ${OPENAI_API_KEY:0:10}..." # 最初の10文字のみ表示
+log "=== OpenAI API Request ==="
+log "Article URL: $ARTICLE_URL"
+log "OpenAI API Key: ${OPENAI_API_KEY:0:10}..."
 
 # APIリクエストのJSONを作成
 cat > request.json << EOF
@@ -29,12 +34,12 @@ cat > request.json << EOF
 }
 EOF
 
-echo "Request JSON:"
+log "Request JSON:"
 cat request.json
-echo ""
+log ""
 
 # OpenAI APIを呼び出し
-echo "Calling OpenAI API..."
+log "Calling OpenAI API..."
 RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST "https://api.openai.com/v1/chat/completions" \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
   -H "Content-Type: application/json" \
@@ -44,15 +49,15 @@ RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST "https://api.openai.c
 HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
 RESPONSE_BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS:/d')
 
-echo "HTTP Status Code: $HTTP_STATUS"
-echo "Response Body:"
+log "HTTP Status Code: $HTTP_STATUS"
+log "Response Body:"
 echo "$RESPONSE_BODY"
-echo ""
+log ""
 
 # エラーハンドリング
 if [ "$HTTP_STATUS" != "200" ]; then
-  echo "❌ OpenAI API request failed with status: $HTTP_STATUS"
-  echo "Error response: $RESPONSE_BODY"
+  log "❌ OpenAI API request failed with status: $HTTP_STATUS"
+  log "Error response: $RESPONSE_BODY"
   LEAD_TEXT="📝 新しい技術記事を投稿しました！"
 else
   # レスポンスからリード文を抽出
@@ -60,18 +65,18 @@ else
   
   # jqのエラーハンドリング
   if [ $? -ne 0 ]; then
-    echo "❌ Failed to parse JSON response with jq"
-    echo "Raw response: $RESPONSE_BODY"
+    log "❌ Failed to parse JSON response with jq"
+    log "Raw response: $RESPONSE_BODY"
     LEAD_TEXT="📝 新しい技術記事を投稿しました！"
   elif [ "$LEAD_TEXT" = "null" ] || [ -z "$LEAD_TEXT" ]; then
-    echo "❌ No content found in OpenAI response"
-    echo "Parsed response: $RESPONSE_BODY"
+    log "❌ No content found in OpenAI response"
+    log "Parsed response: $RESPONSE_BODY"
     LEAD_TEXT="📝 新しい技術記事を投稿しました！"
   else
-    echo "✅ Successfully generated AI lead text"
+    log "✅ Successfully generated AI lead text"
     LEAD_TEXT=$(echo "$LEAD_TEXT" | tr -d '\n' | sed 's/^"//;s/"$//')
   fi
 fi
 
-echo "Final lead text: $LEAD_TEXT"
+log "Final lead text: $LEAD_TEXT"
 echo "ai_lead_text=${LEAD_TEXT}" >> $GITHUB_OUTPUT 
