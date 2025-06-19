@@ -20,6 +20,14 @@ if not GITHUB_OUTPUT:
     print(f"{PREFIX} GITHUB_OUTPUT env not set. Exiting.")
     sys.exit(1)
 
+# OpenAI APIキーが未指定または空文字の場合はAI生成をスキップ
+if not OPENAI_API_KEY:
+    LEAD_TEXT = f"📝 新しい技術記事を投稿しました！\n{ARTICLE_URL}"
+    log("OpenAI APIキー未指定のため、AIリード文生成をスキップします")
+    with open(GITHUB_OUTPUT, "a", encoding="utf-8") as f:
+        f.write(f"ai_lead_text={LEAD_TEXT}\n")
+    sys.exit(0)
+
 log("=== OpenAI API Request ===")
 log(f"Article URL: {ARTICLE_URL}")
 log(f"OpenAI API Key: {OPENAI_API_KEY[:10]}...")

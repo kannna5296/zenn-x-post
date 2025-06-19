@@ -3,8 +3,8 @@ description: 'Automatically post Zenn articles to X (Twitter) with AI-generated 
 
 inputs:
   openai_api_key:
-    description: 'OpenAI API Key'
-    required: true
+    description: 'OpenAI API Key (空の場合はAIリード文生成をスキップ)'
+    required: false
   x_api_key:
     description: 'X API Key'
     required: true
