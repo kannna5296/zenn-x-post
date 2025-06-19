@@ -1,5 +1,9 @@
 # zenn-x-post
 
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/kannna5296/zenn-x-post)
+![GitHub stars](https://img.shields.io/github/stars/kannna5296/zenn-x-post?style=social)
+
 Zennの記事を自動でXに投稿！  
 AIによるリード文生成もワンストップで完結するGitHub Actions用カスタムアクションです。
 
@@ -67,7 +71,7 @@ OpenAI APIキーを指定しない場合は、AIリード文生成をスキッ�
 
 ### 2. ワークフロー例
 
-Zenn記事管理リポジトリの `.github/workflows/post-to-x-with-ai.yml` 例：
+Zennと連携している記事リポジトリの`.github/workflows`配下に、以下のようなGihubActionsファイルを設置する。
 
 ```yaml
 name: Post to X with AI Lead Generation

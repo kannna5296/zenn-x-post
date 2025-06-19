@@ -75,4 +75,8 @@ runs:
         X_API_KEY: ${{ inputs.x_api_key }}
         X_API_SECRET: ${{ inputs.x_api_secret }}
         X_ACCESS_TOKEN: ${{ inputs.x_access_token }}
-        X_ACCESS_SECRET: ${{ inputs.x_access_secret }} 
+        X_ACCESS_SECRET: ${{ inputs.x_access_secret }}
+
+branding:
+  icon: 'zap'
+  color: 'yellow' 
