@@ -4,6 +4,7 @@ import requests
 from requests_oauthlib import OAuth1
 import os
 import sys
+import urllib.parse
 
 PREFIX = "[post-to-x.py]"
 
@@ -38,6 +39,8 @@ if __name__ == "__main__":
         log("Usage: post-to-x.py <message>")
         sys.exit(1)
     message = sys.argv[1]
+    # GITHUB_OUTPUTから受け取った値はURLデコード
+    message = urllib.parse.unquote(message)
     api_key = os.environ.get("X_API_KEY")
     api_secret = os.environ.get("X_API_SECRET")
     access_token = os.environ.get("X_ACCESS_TOKEN")
