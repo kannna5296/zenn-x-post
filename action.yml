@@ -23,6 +23,9 @@ inputs:
   modified_files:
     description: 'Modified markdown files'
     required: false
+  zenn_user_id:
+    description: 'Zenn User ID'
+    required: true
 
 runs:
   using: 'composite'
@@ -34,8 +37,9 @@ runs:
       id: article-check
       shell: bash
       run: |
-        chmod +x "${{ github.action_path }}/scripts/check-articles.sh"
-        "${{ github.action_path }}/scripts/check-articles.sh" "${{ inputs.new_files }}" "${{ inputs.modified_files }}"
+        python "${{ github.action_path }}/scripts/check-articles.py" "${{ inputs.new_files }}" "${{ inputs.modified_files }}"
+      env:
+        ZENN_USER_ID: ${{ inputs.zenn_user_id }}
       
     # 以下 リード分生成 + Post文生成
 
