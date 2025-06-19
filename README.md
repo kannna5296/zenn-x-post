@@ -9,11 +9,11 @@ AIによるリード文生成もワンストップで完結するGitHub Actions�
 
 - **OpenAIあり（AIリード文付き）**
 
-![AIリード文ありのX投稿例](images/x-post-with-ai-lead.png)
+<img src="images/x-post-with-ai-lead.png" alt="AIリード文ありのX投稿例" width="400"/>
 
 - **OpenAIなし（シンプル投稿）**
 
-![AIリード文なしのX投稿例](images/x-post-without-ai-lead.png)
+<img src="images/x-post-without-ai-lead.png" alt="AIリード文なしのX投稿例" width="400"/>
 
 ---
 
