@@ -63,8 +63,7 @@ runs:
       if: steps.article-check.outputs.should_post == 'true'
       shell: bash
       run: |
-        # Twitter APIにリクエストを送信
-        python ${{ github.action_path }}/scripts/tweet.py
+        python "${{ github.action_path }}/scripts/tweet.py"
       env:
         MESSAGE: ${{ steps.ai-lead.outputs.post_message }}
         TWITTER_API_KEY: ${{ inputs.twitter_api_key }}

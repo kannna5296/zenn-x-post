@@ -27,8 +27,8 @@ runs:
       id: generate-lead
       shell: bash
       run: |
-        chmod +x .github/scripts/generate_lead/generate-ai-lead.sh
-        .github/scripts/generate_lead/generate-ai-lead.sh "${{ inputs.article_url }}" "${{ inputs.openai_api_key }}"
+        chmod +x "${{ github.action_path }}/../scripts/generate-ai-lead.sh"
+        "${{ github.action_path }}/../scripts/generate-ai-lead.sh" "${{ inputs.article_url }}" "${{ inputs.openai_api_key }}"
 
     - name: Create Final Message
       id: create-message
