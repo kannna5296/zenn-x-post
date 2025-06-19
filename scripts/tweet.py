@@ -1,7 +1,7 @@
+#!/usr/bin/env python3
 # X（旧Twitter）投稿用スクリプト
 import requests
 from requests_oauthlib import OAuth1
-import json
 import os
 import sys
 
@@ -29,7 +29,10 @@ def post_to_x(message, api_key, api_secret, access_token, access_token_secret):
         return False
 
 if __name__ == "__main__":
-    message = os.environ.get("MESSAGE")
+    if len(sys.argv) != 2:
+        print("Usage: tweet.py <message>")
+        sys.exit(1)
+    message = sys.argv[1]
     api_key = os.environ.get("X_API_KEY")
     api_secret = os.environ.get("X_API_SECRET")
     access_token = os.environ.get("X_ACCESS_TOKEN")

@@ -68,9 +68,8 @@ runs:
       if: steps.article-check.outputs.should_post == 'true'
       shell: bash
       run: |
-        python "${{ github.action_path }}/scripts/tweet.py"
+        python "${{ github.action_path }}/scripts/tweet.py" "${{ steps.generate-lead.outputs.post_message }}"
       env:
-        MESSAGE: ${{ steps.generate-lead.outputs.post_message }}
         X_API_KEY: ${{ inputs.x_api_key }}
         X_API_SECRET: ${{ inputs.x_api_secret }}
         X_ACCESS_TOKEN: ${{ inputs.x_access_token }}

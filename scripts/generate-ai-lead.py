@@ -17,12 +17,12 @@ def set_output(name, value):
         f.write(f"{name}={value}\n")
 
 if len(sys.argv) != 3:
-    print(f"{PREFIX} Usage: generate-ai-lead.py <article_title> <article_url> <openai_api_key>")
+    print(f"{PREFIX} Usage: generate-ai-lead.py <article_title> <article_url>")
     sys.exit(1)
 
 ARTICLE_TITLE = sys.argv[1]
 ARTICLE_URL = sys.argv[2]
-OPENAI_API_KEY = sys.argv[3]
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", None)
 GITHUB_OUTPUT = os.environ.get("GITHUB_OUTPUT", None)
 if not GITHUB_OUTPUT:
     print(f"{PREFIX} GITHUB_OUTPUT env not set. Exiting.")
